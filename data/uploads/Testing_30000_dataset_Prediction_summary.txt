@@ -1,0 +1,12 @@
+Total Records: 30000
+
+Actual Genuine Claims: 16500
+Predicted Genuine Claims: 19741
+
+Actual Fraud Claims: 13500
+Predicted Fraud Claims: 10259
+
+Correctly Predicted: 26751
+Incorrectly Predicted: 3249
+
+Accuracy of the Model is: 89.17%
