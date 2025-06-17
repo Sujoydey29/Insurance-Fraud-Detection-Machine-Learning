@@ -35,9 +35,33 @@ pipeline = joblib.load(PIPELINE_PATH)
 df_all   = pd.read_csv(DATA_PATH)
 
 # ── Helpers ─────────────────────────────
+def parse_date(dt_str: str) -> datetime:
+    """Parse a variety of datetime string formats."""
+    s = str(dt_str).strip().replace(" IST", "")
+    fmts = [
+        "%Y-%m-%d %H:%M",
+        "%Y-%m-%d %I:%M %p",
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%d %I:%M:%S %p",
+        "%d-%m-%Y %H:%M",
+        "%d-%m-%Y %I:%M %p",
+        "%d-%m-%Y %H:%M:%S",
+        "%d-%m-%Y %I:%M:%S %p",
+    ]
+    for fmt in fmts:
+        try:
+            return datetime.strptime(s, fmt)
+        except ValueError:
+            continue
+    return pd.to_datetime(s, dayfirst=True).to_pydatetime()
+
+
 def compute_time_diff(inc: str, clm: str) -> float:
-    a = datetime.strptime(inc.replace(" IST",""), "%Y-%m-%d %I:%M %p")
-    b = datetime.strptime(clm.replace(" IST",""), "%Y-%m-%d %I:%M %p")
+    """Return the difference in hours between two datetime strings."""
+    a = parse_date(inc)
+    b = parse_date(clm)
+    if pd.isna(a) or pd.isna(b):
+        raise ValueError("Could not parse incident or claim time")
     return (b - a).total_seconds() / 3600.0
 
 # ── Schemas ─────────────────────────────
